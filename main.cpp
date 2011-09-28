@@ -16,13 +16,14 @@ IplImage* GetThresholdedImage(IplImage* img)
     // Convert the image into an HSV image
     IplImage* imgHSV = cvCreateImage(cvGetSize(img), 8, 3);
     cvCvtColor(img, imgHSV, CV_BGR2HSV);
+    // smooth it
+    cvSmooth(imgHSV, imgHSV, CV_GAUSSIAN, 11, 11 );
     IplImage* imgThreshed = cvCreateImage(cvGetSize(img), 8, 1);
     // Values 20,100,100 to 30,255,255 working perfect for yellow at around 6pm
     cvInRangeS(imgHSV, cvScalar(FROM_R, FROM_G, FROM_B), cvScalar(TO_R, TO_G, TO_B), imgThreshed);
     cvReleaseImage(&imgHSV);
     return imgThreshed;
 }
-
 
 int main(int argc, char *argv[])
 {
