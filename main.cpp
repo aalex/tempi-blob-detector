@@ -49,6 +49,10 @@ int main(int argc, char *argv[])
     // the tracked positions of the ball
     IplImage* imgScribble = NULL;
 
+    // Holding the last and current ball positions
+    int posX = 0;
+    int posY = 0;
+
     while (running)
     {
         frame = cvQueryFrame(capture);
@@ -76,10 +80,7 @@ int main(int argc, char *argv[])
         double moment10 = cvGetSpatialMoment(moments, 1, 0);
         double moment01 = cvGetSpatialMoment(moments, 0, 1);
         double area = cvGetCentralMoment(moments, 0, 0);
-
-        // Holding the last and current ball positions
-        static int posX = 0;
-        static int posY = 0;
+        delete moments;
 
         int lastX = posX;
         int lastY = posY;
@@ -91,10 +92,10 @@ int main(int argc, char *argv[])
         printf("position (%d,%d)\n", posX, posY);
 
         // We want to draw a line only if its a valid position
-        if(lastX>0 && lastY>0 && posX>0 && posY>0)
+        if(lastX > 0 && lastY > 0 && posX > 0 && posY > 0)
         {
             // Draw a yellow line from the previous point to the current point
-            cvLine(imgScribble, cvPoint(posX, posY), cvPoint(lastX, lastY), cvScalar(0,255,255), 5);
+            cvLine(imgScribble, cvPoint(posX, posY), cvPoint(lastX, lastY), cvScalar(0, 255, 255), 5);
         }
 
         // Add the scribbling image and the frame... and we get a combination of the two
@@ -105,24 +106,9 @@ int main(int argc, char *argv[])
         // Release the thresholded image... we need no memory leaks.. please
         cvReleaseImage(&imgYellowThresh);
 
-        /// IplImage *tmp = cvCreateImage(cvSize(frame->width, frame->height), IPL_DEPTH_8U, 1);
-        /// cvCvtColor(frame, tmp, CV_RGB2GRAY );
-        /// cvSmooth(tmp, tmp, CV_GAUSSIAN, 11, 11 );
-        /// cvThreshold(tmp, tmp, threshold, 255, CV_THRESH_BINARY);
-        /// //CvMemStorage* storage = cvCreateMemStorage(0);
-        /// //CvSeq* cvHoughCircles(tmp, storage, int method, double dp, double min_dist, double param1=100, double param2=100, int min_radius=0, int max_radius=0 );
-
-        /// //cvResize(frame, temp, CV_INTER_CUBIC); // Resize
-        /// //cvSmooth(temp, temp, CV_GAUSSIAN, 7, 7, 0, 0); // Real time filter: Gaussian blur
-        /// //cvSaveImage("test.jpg", temp, 0); // Save this image
-        /// //cvSave("test.xml", temp, NULL, NULL, cvAttrList(0, 0)); // Save as xml
-        /// //cvShowImage(WINDOW_NAME.c_str(), frame); // Display the frame
-        /// cvShowImage(WINDOW_NAME.c_str(), tmp); // Display the frame
-
         keyPressed = cvWaitKey(1); // wait 1 ms
         if (keyPressed == 27) // escape to quit
             running = false;
-        
     }
     
     cvReleaseImage(&frame);
