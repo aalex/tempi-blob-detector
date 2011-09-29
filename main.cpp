@@ -25,6 +25,16 @@ IplImage* GetThresholdedImage(IplImage* img)
     return imgThreshed;
 }
 
+static void print_capture_info(CvCapture &capture)
+{
+    int height = (int) cvGetCaptureProperty(&capture, CV_CAP_PROP_FRAME_HEIGHT);
+    int width = (int) cvGetCaptureProperty(&capture, CV_CAP_PROP_FRAME_WIDTH);
+    double fps = cvGetCaptureProperty(&capture, CV_CAP_PROP_FPS);
+    std::cout << "Video image is " << width << "x" << height << std::endl;
+    std::cout << "Frame rate: " << fps << std::endl;
+    // TODO: CV_CAP_PROP_FOURCC
+}
+
 int main(int argc, char *argv[])
 {
     CvCapture* capture = 0;
@@ -37,6 +47,7 @@ int main(int argc, char *argv[])
     int camera_index = 0;
 
     capture = cvCaptureFromCAM(camera_index);
+    print_capture_info(*capture);
     if (! capture)
     {
         std::cerr << "Cannot initialize camera" << std::endl;;
